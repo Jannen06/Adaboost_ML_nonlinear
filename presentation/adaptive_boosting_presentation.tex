@@ -1,0 +1,343 @@
+% Adaptive Boosting (AdaBoost) Presentation
+% Created using LaTeX Beamer
+
+\documentclass{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+% Title Information
+\title{AdaBoost: From Weak Learners to Strong Classifiers}
+\subtitle{Minimizing Exponential Error via Sequential Learning}
+\author{Nikhil, Jannen}
+\date{\today}
+
+% Begin Document
+\begin{document}
+
+% Title Slide
+\begin{frame}
+\titlepage
+\end{frame}
+\note{
+Hello everyone. Today we want to talk about AdaBoost. We often try to build one 'genius' model, like a deep neural network, to solve a problem. But AdaBoost takes a different approach: it asks, can a committee of 'weak learners—come together to make a genius decision?
+}
+
+% Introduction
+\begin{frame}{The Power of the Committee}
+    \begin{figure}
+        \centering
+        \begin{minipage}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Figure_1.png}
+            \caption{Linear Separability Challenge}
+        \end{minipage}
+        \hfill
+        \begin{minipage}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Figure_2.png}
+            \caption{Decision Stump fails}
+        \end{minipage}
+    \end{figure}
+\begin{itemize}
+    \item \textbf{The Problem:} Complex data is rarely linearly separable.
+    \item \textbf{The Naive Solution:} Build a massive, complex model.
+    \item \textbf{The AdaBoost Solution:} Combine simple ``Decision boundaries.''
+\end{itemize}
+\[
+H(x) = \text{sign}\left(\sum \alpha_k h_k(x)\right)
+\]
+\end{frame}
+
+\note{
+Look at this dataset. A single line—a decision stump—fails miserably. It gets 50\% wrong.
+AdaBoost says: don't make the line more complex. Instead, let's keep adding simple lines, but make each new line focus on the mistakes of the previous one. The final strong classifier $H(x)$ is just a weighted sum of these simple lines.
+}
+
+% Theoretical Foundations
+% Slide 3
+\begin{frame}{Why Not Squared Error?}
+\begin{itemize}
+    \item \textbf{Regression:} Minimizes Squared Error (MSE).
+    \item \textbf{Classification:} MSE is unreliable.
+    \begin{itemize}
+        \item Penalizes ``too correct'' predictions.
+        \item Sensitive to outliers in the wrong way.
+    \end{itemize}
+    \item \textbf{AdaBoost:} Minimizes Exponential Error.
+\end{itemize}
+\[
+E = \sum e^{-t_n f(x_n)}
+\]
+Focuses heavily on misclassified points ($t \neq f(x)$).
+\end{frame}
+
+\note{
+So how do we train this? Your instinct might be to use Squared Error, like in regression. But for classification, that's dangerous. If the class is +1 and we predict +10, Squared Error penalizes us for being 'too correct.'
+AdaBoost uses Exponential Error. It pushes the error to zero if we are right, but explodes exponentially if we are wrong. This 'panic' when wrong is what drives the algorithm.
+}
+
+% Slide 4
+\begin{frame}{Sequential Minimization}
+\[
+E = \sum_{n=1}^{N} \exp\left(-t_n \left[H_{k-1}(x_n) + \alpha_k h_k(x_n)\right]\right)
+\]
+\begin{itemize}
+    \item Cannot optimize all $\alpha$ and $h$ at once.
+    \item \textbf{Greedy Approach:} Freeze past, optimize current step.
+    \item \textbf{The Weight Trick:}
+\end{itemize}
+\[
+w_n^{(k)} = \exp(-t_n H_{k-1}(x_n))
+\]
+\begin{itemize}
+    \item Previous errors become current weights!
+    \item Misclassified points get higher weights.
+\end{itemize}
+\end{frame}
+
+\note{
+This is the core mathematical trick. We don't solve the whole problem at once. We freeze the past.
+If we expand the error equation, the 'past' predictions just become a constant number for each data point. We call this number the weight $w_n$. This proves that AdaBoost isn't just heuristic—it's mathematically updating weights based on previous total error.
+}
+
+% Slide 5
+\begin{frame}{Finding the Optimal Weight ($\alpha_k$)}
+\begin{itemize}
+    \item \textbf{Goal:} Find $\alpha_k$ to minimize $E$.
+    \item Taking the derivative: $\frac{\partial E}{\partial \alpha_k} = 0$
+    \item \textbf{Result:}
+\end{itemize}
+\[
+\alpha_k = \frac{1}{2} \ln \left( \frac{1-\epsilon_k}{\epsilon_k} \right)
+\]
+\begin{itemize}
+    \item Low Error ($\epsilon_k \to 0$) $\Rightarrow$ High Alpha
+    \item Random Guess ($\epsilon_k = 0.5$) $\Rightarrow$ Zero Alpha
+    \item Worse than random ($\epsilon_k > 0.5$) $\Rightarrow$ Negative Alpha
+\end{itemize}
+\end{frame}
+\note{
+This is the most important formula in Lecture 9. Where does $\alpha$ come from? It comes from setting the derivative of the error to zero.
+Look at the result: if the error $\epsilon$ is small, the term inside the log becomes huge, and $\alpha$ becomes huge. The algorithm mathematically trusts the experts and ignores the random guessers.
+}
+
+%slide 6
+\begin{frame}{Updating Sample Weights}
+\begin{itemize}
+    \item After computing $\alpha_k$ and training $h_k$, update weights:
+\end{itemize}
+\[
+w_n^{(k+1)} = w_n^{(k)} \cdot \exp\left(-\alpha_k \cdot t_n \cdot h_k(x_n)\right)
+\]
+\begin{itemize}
+    \item \textbf{If correct:} $t_n \cdot h_k(x_n) = 1 \Rightarrow$ weight decreases
+    \item \textbf{If wrong:} $t_n \cdot h_k(x_n) = -1 \Rightarrow$ weight increases
+    \item \textbf{Normalize:} $w_n^{(k+1)} \leftarrow \frac{w_n^{(k+1)}}{\sum_i w_i^{(k+1)}}$
+\end{itemize}
+\vspace{0.2cm}
+\small
+Hard examples get harder weights: forces next learner to focus.
+\end{frame}
+
+
+% Slide 6
+\begin{frame}{The AdaBoost Algorithm}
+\small
+\begin{enumerate}
+    \item \textbf{Initialize:} $w_n^{(1)} = \frac{1}{N}$
+    \item \textbf{For} $k = 1, 2, \ldots, K$:
+    \begin{enumerate}
+        \item Train weak learner $h_k$ on weighted data
+        \item Calculate error: $\epsilon_k = \sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)$
+        \item Compute weight: $\alpha_k = \frac{1}{2} \ln\left(\frac{1-\epsilon_k}{\epsilon_k}\right)$
+        \item Update: $w_n^{(k+1)} = w_n^{(k)} \cdot \exp(-\alpha_k \cdot t_n \cdot h_k(x_n))$
+        \item Normalize: $w_n^{(k+1)} \leftarrow \frac{w_n^{(k+1)}}{\sum_i w_i^{(k+1)}}$
+    \end{enumerate}
+    \item \textbf{Output:} $H(x) = \text{sign}\left(\sum_{k=1}^{K} \alpha_k h_k(x)\right)$
+\end{enumerate}
+\end{frame}
+
+\note{
+So here is the full cycle. We train a simple classifier. We calculate how much to trust it ($\alpha$). Then we update the data weights. Notice the update rule: if the classifier was wrong, the exponent is positive, and the weight grows. The next classifier is forced to pay attention to these hard points.
+}
+
+% NEW SLIDE 3: Dataset Overview
+\begin{frame}{The Dataset: Breast Cancer Wisconsin (Diagnostic)}
+\begin{columns}[T]
+    \column{0.48\textwidth}
+    \textbf{What are we classifying?}
+    \begin{itemize}
+        \item[\textcolor{red}{$\bullet$}] \textbf{Source:} FNA biopsy images
+        \item[\textcolor{red}{$\bullet$}] \textbf{Samples:} 569 patients
+        \item[\textcolor{red}{$\bullet$}] \textbf{Task:} Binary classification
+    \end{itemize}
+    
+    \vspace{0.15cm}
+    \small
+    \begin{itemize}
+        \item Malignant (M): $\sim37\%$
+        \item Benign (B): $\sim63\%$
+    \end{itemize}
+    
+    \vspace{0.2cm}
+    \textbf{Why it matters:}
+    \begin{itemize}
+        \item[\textcolor{blue}{$\bullet$}] Early cancer detection
+        \item[\textcolor{blue}{$\bullet$}] Non-invasive procedure
+        \item[\textcolor{blue}{$\bullet$}] Real-world ML
+    \end{itemize}
+    
+    \column{0.48\textwidth}
+    \textbf{Feature Engineering:}
+    \small
+    \begin{itemize}
+        \item 10 cell nucleus characteristics
+        \item 3 measurements each
+        \item $\Rightarrow$ 30 total features
+    \end{itemize}
+    
+    \vspace{0.1cm}
+    \tiny
+    \begin{enumerate}
+        \item Radius
+        \item Texture
+        \item Perimeter
+        \item Area
+        \item Smoothness
+        \item Compactness
+        \item Concavity
+        \item Concave Points
+        \item Symmetry
+        \item Fractal Dimension
+    \end{enumerate}
+\end{columns}
+\end{frame}
+
+\note{
+This dataset comes from 569 actual breast cancer patients. Each patient had a fine needle aspirate biopsy, and experts extracted 30 characteristics from the cell nuclei images. Our goal is to predict whether cells are malignant (cancerous) or benign. Why is this perfect for AdaBoost? In the full 30-dimensional space, these two classes are non-linearly separable---a single straight line fails. This makes it ideal for ensemble methods like AdaBoost.
+}
+
+
+% NEW SLIDE 4: Visualization Challenge
+\begin{frame}{Visualization Strategy: 30D to 2D Projection}
+\begin{figure}
+    \centering
+    % \includegraphics[width=0.5\textwidth]{breast_cancer_infographic.png}
+    \caption{\small Breast Cancer Wisconsin (Diagnostic) dataset: 569 FNA-based samples with 30 cell-nucleus features used to classify malignant vs. benign tumors and demonstrate AdaBoost on high-dimensional medical data.}
+\end{figure}
+
+\vspace{0.1cm}
+\small
+\begin{itemize}
+    \item \textbf{Challenge:} 30 features impossible to visualize
+    \item \textbf{Solution:} Principal Component Analysis (PCA)
+    \begin{itemize}
+        \item Projects 30D to 2D while preserving variance
+        \item Classes remain \textbf{non-linearly separable}
+        \item Perfect for demo
+    \end{itemize}
+    \item \textbf{Key Insight:} Single stump (line) still fails in 2D
+\end{itemize}
+\end{frame}
+
+\note{
+Now here's the visualization challenge. We have 30 features. We can't plot 30 dimensions. So we use PCA to project down to 2D. Even though we lose dimensionality, the fundamental non-linear structure remains. In 2D, a single decision stump still fails to separate the classes cleanly. This is exactly what we want to demonstrate: AdaBoost builds an ensemble of these weak stumps, and together they create a complex, non-linear decision boundary.
+}
+
+% Slide 7
+\begin{frame}{Live Demo: AdaBoost on Breast Cancer (2D PCA)}
+\begin{itemize}
+    \item Switch to Python console
+    \item Run: \texttt{python visualize\_adaboost\_pca.py}
+    \item Evolution of decision boundary:
+    \begin{itemize}
+        \item Panel 1: Single stump (fails)
+        \item Panels 2-5: Ensemble grows
+        \item Right: Error curves decreasing
+    \end{itemize}
+    \item Compare to data (red = malignant, blue = benign)
+\end{itemize}
+
+\vspace{0.2cm}
+\small
+\textbf{Key:} Exponential error decreases each iteration!
+\end{frame}
+
+\note{
+Let's see this math in action. I've implemented the algorithm from scratch. I'm going to run it on a non-linearly separable dataset. Watch how the decision boundary evolves from a simple line to a complex shape.
+}
+
+% Slide 11
+\begin{frame}{Why AdaBoost Works: The Exponential Error}
+\begin{figure}
+    \centering
+    % \includegraphics[width=0.65\textwidth]{03_adaboost_evolution.png}
+    \caption{\small Decision boundary evolution: 1, 2, 3, 5 weak learners}
+\end{figure}
+
+\small
+\begin{itemize}
+    \item Single stump: Misclassifies $\sim50\%$
+    \item 2 stumps: Better separation
+    \item 5 stumps: $>95\%$ accuracy
+\end{itemize}
+\end{frame}
+
+\note{
+Notice how the boundary becomes increasingly complex. With just one stump, we get a straight line that fails. With five stumps, we get a sophisticated, non-linear boundary. This is the power of ensemble methods. Each weak learner adds specificity to the previous one.
+}
+
+% Slide 8
+\begin{frame}{Summary}
+\begin{itemize}
+    \item \textbf{AdaBoost minimizes Exponential Error}
+    \item Turns complex problem into simple sequence (greedy)
+    \item \textbf{Weight update:} Focuses on misclassified examples
+    \item \textbf{Key Takeaway:} Smart combination of simple models
+    \item \textbf{Rigorous:} Every formula from exponential loss
+\end{itemize}
+
+\vspace{0.3cm}
+\textcolor{blue}{\textbf{AdaBoost: Mathematically principled and empirically powerful}}
+\end{frame}
+
+\note{
+In summary, AdaBoost works because it's rigorous. It turns a scary loss function into a simple greedy process. It focuses on the hardest examples, allowing simple models to solve complex problems. Thank you.
+}
+
+% References
+% Slide 9 (Last Slide)
+\begin{frame}{References \& Tools}
+\small
+\begin{itemize}
+    \item \textbf{Literature:}
+    \begin{itemize}
+        \item Bishop, C. M. (2006). \textit{Pattern Recognition} (Ch. 14).
+        \item Friedman, Hastie, Tibshirani (2000). \textit{Additive Logistic Regression}.
+        \item Viola, Jones (2004). \textit{Robust Real-Time Face Detection}.
+    \end{itemize}
+    \item \textbf{Dataset:}
+    \begin{itemize}
+        \item Wolberg et al. (1995). \textit{Breast Cancer Wisconsin}. UCI ML. DOI: 10.24432/C5DW2B
+    \end{itemize}
+    \item \textbf{Tools:}
+    \begin{itemize}
+        \item scikit-learn, ucimlrepo, matplotlib
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\note{
+For this project, I used the Breast Cancer Wisconsin Diagnostic dataset from the UCI repository. The implementation relies on scikit-learn for benchmarking and matplotlib for the visualization. The theoretical derivations are based on Bishop's `Pattern Recognition' and the original paper by Friedman et al.
+}
+
+
+
+
+% End Document
+\end{document}
