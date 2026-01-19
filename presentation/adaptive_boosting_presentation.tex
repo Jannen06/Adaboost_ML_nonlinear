@@ -62,10 +62,10 @@ AdaBoost says: don't make the line more complex. Instead, let's keep adding simp
 % Slide 3
 \begin{frame}{Why Not Squared Error?}
 \begin{itemize}
-    \item \textbf{Regression:} Minimizes Squared Error (MSE).
-    \item \textbf{Classification:} MSE is unreliable.
+    \item \textbf{Regression:} Minimizes Least Squared Error (LSE).
+    \item \textbf{Classification:} LSE is unreliable.
     \begin{itemize}
-        \item Penalizes ``too correct'' predictions.
+        \item Penalizes ``too correct'' predictions (Overfitting).
         \item Sensitive to outliers in the wrong way.
     \end{itemize}
     \item \textbf{AdaBoost:} Minimizes Exponential Error.
@@ -152,8 +152,8 @@ Hard examples get harder weights: forces next learner to focus.
     \item \textbf{Initialize:} $w_n^{(1)} = \frac{1}{N}$
     \item \textbf{For} $k = 1, 2, \ldots, K$:
     \begin{enumerate}
-        \item Train weak learner $h_k$ on weighted data
-        \item Calculate error: $\epsilon_k = \sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)$
+        \item Train weak learner $h_k$ on weighted data $\j_k = \sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)$
+        \item Calculate error: $\epsilon_k = \frac{\sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)}{\sum_i w_i^{(k+1)}}$
         \item Compute weight: $\alpha_k = \frac{1}{2} \ln\left(\frac{1-\epsilon_k}{\epsilon_k}\right)$
         \item Update: $w_n^{(k+1)} = w_n^{(k)} \cdot \exp(-\alpha_k \cdot t_n \cdot h_k(x_n))$
         \item Normalize: $w_n^{(k+1)} \leftarrow \frac{w_n^{(k+1)}}{\sum_i w_i^{(k+1)}}$
@@ -324,6 +324,7 @@ In summary, AdaBoost works because it's rigorous. It turns a scary loss function
     \item \textbf{Dataset:}
     \begin{itemize}
         \item Wolberg et al. (1995). \textit{Breast Cancer Wisconsin}. UCI ML. DOI: 10.24432/C5DW2B
+        \item \href{https://archive.ics.uci.edu/dataset/17/breast+cancer+wisconsin+diagnostic}{Dataset Link}
     \end{itemize}
     \item \textbf{Tools:}
     \begin{itemize}
