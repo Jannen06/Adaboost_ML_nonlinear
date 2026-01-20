@@ -4,7 +4,7 @@ from adaboost_from_scratch import AdaBoost
 import numpy as np
 
 # Load data
-X, y, _, _ = load_wdbc("dataset/wdbc.data")
+X, y, _, _ = load_wdbc("./dataset/wdbc.data")
 X_2d, _, _, _ = to_pca_2d(X)
 
 # Generate random predictions for initial visualization

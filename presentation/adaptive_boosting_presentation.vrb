@@ -1,0 +1,36 @@
+\frametitle{Live Demo: AdaBoost on Breast Cancer (2D PCA)}
+
+
+
+\vspace{-0.3cm}
+
+\begin{columns}[T]
+    \column{0.50\textwidth}
+    \textbf{How to Run:}
+    \begin{verbatim}
+    python live_demo.py
+    \end{verbatim}
+
+    \vspace{0.5cm}
+    \textbf{What to Observe:}
+    \begin{itemize}
+        \item Decision boundary starts simple (linear stump)
+        \item Boundary becomes increasingly complex
+        \item Classification accuracy improves with iterations
+        \item Misclassified points get higher weights
+        \item Final ensemble combines weak learners effectively
+    \end{itemize}
+
+    \column{0.50\textwidth}
+    \textbf{Expected Behavior:}
+    \begin{enumerate}
+        \item \textbf{Iteration 1:} Single decision stump
+        \item \textbf{Iterations 2-5:} Boundary refines, adapts to errors
+        \item \textbf{Iterations 6-10:} Complex non-linear boundary
+        \item \textbf{Final:} Accurate classification on 2D PCA space
+    \end{enumerate}
+
+    \vspace{0.3cm}
+    \small \textit{The algorithm iteratively focuses on hard-to-classify samples}
+\end{columns}
+

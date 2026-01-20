@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{hyperref}
+\usepackage{multimedia}
 
 % Title Information
 \title{AdaBoost: From Weak Learners to Strong Classifiers}
@@ -24,7 +25,7 @@
 \titlepage
 \end{frame}
 \note{
-Hello everyone. Today we want to talk about AdaBoost. We often try to build one 'genius' model, like a deep neural network, to solve a problem. But AdaBoost takes a different approach: it asks, can a committee of 'weak learners—come together to make a genius decision?
+Hello everyone. Today we want to talk about AdaBoost. We often try to build one 'genius' model, like a deep neural network, to solve a problem. But AdaBoost takes a different approach: it asks, can a committee of 'weak learners' come together to make a genius decision?
 }
 
 % Introduction
@@ -145,15 +146,15 @@ Hard examples get harder weights: forces next learner to focus.
 \end{frame}
 
 
-% Slide 6
+% Slide 7
 \begin{frame}{The AdaBoost Algorithm}
 \small
 \begin{enumerate}
     \item \textbf{Initialize:} $w_n^{(1)} = \frac{1}{N}$
     \item \textbf{For} $k = 1, 2, \ldots, K$:
     \begin{enumerate}
-        \item Train weak learner $h_k$ on weighted data $\j_k = \sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)$
-        \item Calculate error: $\epsilon_k = \frac{\sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)}{\sum_i w_i^{(k+1)}}$
+        \item Train weak learner $h_k$ on weighted data
+        \item Calculate error: $\epsilon_k = \frac{\sum_n w_n^{(k)} \cdot I(h_k(x_n) \neq t_n)}{\sum_i w_i^{(k)}}$
         \item Compute weight: $\alpha_k = \frac{1}{2} \ln\left(\frac{1-\epsilon_k}{\epsilon_k}\right)$
         \item Update: $w_n^{(k+1)} = w_n^{(k)} \cdot \exp(-\alpha_k \cdot t_n \cdot h_k(x_n))$
         \item Normalize: $w_n^{(k+1)} \leftarrow \frac{w_n^{(k+1)}}{\sum_i w_i^{(k+1)}}$
@@ -166,7 +167,7 @@ Hard examples get harder weights: forces next learner to focus.
 So here is the full cycle. We train a simple classifier. We calculate how much to trust it ($\alpha$). Then we update the data weights. Notice the update rule: if the classifier was wrong, the exponent is positive, and the weight grows. The next classifier is forced to pay attention to these hard points.
 }
 
-% NEW SLIDE 3: Dataset Overview
+% Slide 8: Dataset Overview
 \begin{frame}{The Dataset: Breast Cancer Wisconsin (Diagnostic)}
 \begin{columns}[T]
     \column{0.48\textwidth}
@@ -223,76 +224,113 @@ This dataset comes from 569 actual breast cancer patients. Each patient had a fi
 }
 
 
-% NEW SLIDE 4: Visualization Challenge
+% Slide 9: Visualization Challenge
 \begin{frame}{Visualization Strategy: 30D to 2D Projection}
-\begin{figure}
-    \centering
-    % \includegraphics[width=0.5\textwidth]{breast_cancer_infographic.png}
-    \caption{\small Breast Cancer Wisconsin (Diagnostic) dataset: 569 FNA-based samples with 30 cell-nucleus features used to classify malignant vs. benign tumors and demonstrate AdaBoost on high-dimensional medical data.}
-\end{figure}
-
-\vspace{0.1cm}
-\small
-\begin{itemize}
-    \item \textbf{Challenge:} 30 features impossible to visualize
-    \item \textbf{Solution:} Principal Component Analysis (PCA)
+\begin{columns}[T]
+    \column{0.48\textwidth}
+    \textbf{The Challenge:}
     \begin{itemize}
-        \item Projects 30D to 2D while preserving variance
-        \item Classes remain \textbf{non-linearly separable}
-        \item Perfect for demo
+        \item 30 features $\Rightarrow$ impossible to visualize
+        \item Need 2D representation
     \end{itemize}
-    \item \textbf{Key Insight:} Single stump (line) still fails in 2D
-\end{itemize}
+    
+    \vspace{0.3cm}
+    \textbf{Solution: PCA}
+    \begin{itemize}
+        \item Projects 30D to 2D
+        \item Preserves maximum variance
+        \item Classes remain \textbf{non-linearly separable}
+    \end{itemize}
+    
+    
+    \column{0.48\textwidth}
+    \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{pca_visualization.png}
+        \caption{\footnotesize 2D projection of 30D breast cancer features}
+    \end{figure}
+\end{columns}
 \end{frame}
 
 \note{
 Now here's the visualization challenge. We have 30 features. We can't plot 30 dimensions. So we use PCA to project down to 2D. Even though we lose dimensionality, the fundamental non-linear structure remains. In 2D, a single decision stump still fails to separate the classes cleanly. This is exactly what we want to demonstrate: AdaBoost builds an ensemble of these weak stumps, and together they create a complex, non-linear decision boundary.
 }
 
-% Slide 7
-\begin{frame}{Live Demo: AdaBoost on Breast Cancer (2D PCA)}
-\begin{itemize}
-    \item Switch to Python console
-    \item Run: \texttt{python visualize\_adaboost\_pca.py}
-    \item Evolution of decision boundary:
-    \begin{itemize}
-        \item Panel 1: Single stump (fails)
-        \item Panels 2-5: Ensemble grows
-        \item Right: Error curves decreasing
-    \end{itemize}
-    \item Compare to data (red = malignant, blue = benign)
-\end{itemize}
 
-\vspace{0.2cm}
-\small
-\textbf{Key:} Exponential error decreases each iteration!
+% Slide 10: Live Demo
+\begin{frame}{Live Demo: AdaBoost on Breast Cancer (2D PCA)}
+
+\vspace{-0.3cm}
+
+\begin{columns}[T]
+    \column{0.50\textwidth}
+    \vspace{0.5cm}
+    \textbf{What to Observe:}
+    \begin{itemize}
+        \item Decision boundary starts simple (linear stump)
+        \item Boundary becomes increasingly complex
+        \item Classification accuracy improves with iterations
+        \item Misclassified points get higher weights
+        \item Final ensemble combines weak learners effectively
+    \end{itemize}
+
+    \column{0.50\textwidth}
+    \textbf{Expected Behavior:}
+    \begin{enumerate}
+        \item \textbf{Iteration 1:} Single decision stump
+        \item \textbf{Iterations 2-5:} Boundary refines, adapts to errors
+        \item \textbf{Iterations 6-10:} Complex non-linear boundary
+        \item \textbf{Final:} Accurate classification on 2D PCA space
+    \end{enumerate}
+
+    \vspace{0.3cm}
+    \small \textit{The algorithm iteratively focuses on hard-to-classify samples}
+\end{columns}
+
 \end{frame}
 
 \note{
 Let's see this math in action. I've implemented the algorithm from scratch. I'm going to run it on a non-linearly separable dataset. Watch how the decision boundary evolves from a simple line to a complex shape.
 }
 
-% Slide 11
+
+% Slide 11: Why AdaBoost Works
 \begin{frame}{Why AdaBoost Works: The Exponential Error}
+
 \begin{figure}
     \centering
-    % \includegraphics[width=0.65\textwidth]{03_adaboost_evolution.png}
-    \caption{\small Decision boundary evolution: 1, 2, 3, 5 weak learners}
+    \includegraphics[width=0.95\textwidth]{./boundary_progression.png}
+    \caption{\footnotesize Decision boundary evolution: 1, 2, 3, 5 weak learners. 
+    Blue regions = Benign class, Red regions = Malignant class. Black line = decision boundary.}
 \end{figure}
+
+\vspace{-0.2cm}
 
 \small
 \begin{itemize}
-    \item Single stump: Misclassifies $\sim50\%$
-    \item 2 stumps: Better separation
-    \item 5 stumps: $>95\%$ accuracy
+    \item \textbf{Iteration 1:} Single stump creates \textcolor{red}{vertical line}
+    \begin{itemize}
+        \item Linear boundary = no better than random (92.1\%)
+        \item Cannot capture non-linear class structure
+    \end{itemize}
+    
+    \item \textbf{Iterations 2-5:} Ensemble focuses on \textbf{misclassified points}
+    \begin{itemize}
+        \item Weights on errors grow exponentially
+        \item Next stump forces hard regions
+    \end{itemize}
+    
 \end{itemize}
+
 \end{frame}
 
 \note{
-Notice how the boundary becomes increasingly complex. With just one stump, we get a straight line that fails. With five stumps, we get a sophisticated, non-linear boundary. This is the power of ensemble methods. Each weak learner adds specificity to the previous one.
+Look at this visualization. All four panels show the same data, but the decision boundary changes. With just one weak learner, we get a straight vertical line that clearly fails---it's no better than guessing. But as we add more weak learners, something remarkable happens. The algorithm doesn't redesign the boundary; instead, it reweights the training data. Misclassified points get exponentially higher weights, forcing the next learner to focus on the hard cases. By the fifth learner, you start to see the boundary adapt. This is what exponential error minimization does: it's relentless about correcting mistakes.
 }
 
-% Slide 8
+
+
+% Slide 12
 \begin{frame}{Summary}
 \begin{itemize}
     \item \textbf{AdaBoost minimizes Exponential Error}
@@ -311,7 +349,7 @@ In summary, AdaBoost works because it's rigorous. It turns a scary loss function
 }
 
 % References
-% Slide 9 (Last Slide)
+% Slide 13 (Last Slide)
 \begin{frame}{References \& Tools}
 \small
 \begin{itemize}
@@ -331,11 +369,10 @@ In summary, AdaBoost works because it's rigorous. It turns a scary loss function
         \item scikit-learn, ucimlrepo, matplotlib
     \end{itemize}
 \end{itemize}
-\end{frame}
-
 \note{
 For this project, I used the Breast Cancer Wisconsin Diagnostic dataset from the UCI repository. The implementation relies on scikit-learn for benchmarking and matplotlib for the visualization. The theoretical derivations are based on Bishop's `Pattern Recognition' and the original paper by Friedman et al.
 }
+\end{frame}
 
 
 
