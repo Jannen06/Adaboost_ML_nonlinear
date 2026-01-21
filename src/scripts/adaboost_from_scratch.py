@@ -4,7 +4,7 @@ from sklearn.tree import DecisionTreeClassifier
 class AdaBoost:
     def __init__(self, n_estimators=50):
         self.n_estimators = n_estimators
-        self.alphas = []  # α_k values
+        self.alphas = []  # alpha_k values
         self.stumps = []  # h_k weak learners
 
     def fit(self, X, y):
@@ -18,14 +18,14 @@ class AdaBoost:
             stump.fit(X, y, sample_weight=w)
             predictions = stump.predict(X)
             
-            # Step 2b: Calculate weighted error ε_k
+            # Step 2b: Calculate weighted error epsilon_k
             misclassified = (predictions != y)
             epsilon = np.sum(w * misclassified) / np.sum(w)
             
             # Avoid division by zero or log(0)
             epsilon = np.clip(epsilon, 1e-10, 1 - 1e-10)
             
-            # Step 2c: Compute α_k = 0.5 * ln((1-ε)/ε)
+            # Step 2c: Compute α_k = 0.5 * ln((1-epsilon)/epsilon)
             alpha = 0.5 * np.log((1 - epsilon) / epsilon)
             
             # Store
@@ -39,10 +39,10 @@ class AdaBoost:
             w = w / np.sum(w)
 
     def predict_at_iteration(self, X, iteration):
-        """Predict using only first 'iteration' weak learners"""
+        # Predict using only first iteration of weak learners
         iteration = min(iteration, len(self.stumps))
         
-        # H(x) = sign(Σ α_k * h_k(x))
+        # H(x) = sign(Sigma alpha_k * h_k(x))
         weighted_sum = np.zeros(X.shape[0])
         for k in range(iteration):
             predictions = self.stumps[k].predict(X)
@@ -51,5 +51,5 @@ class AdaBoost:
         return np.sign(weighted_sum)
     
     def predict(self, X):
-        """Final prediction using all weak learners"""
+        # Final prediction using all weak learners
         return self.predict_at_iteration(X, self.n_estimators)

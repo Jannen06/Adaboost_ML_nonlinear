@@ -35,7 +35,7 @@ def to_pca_2d(X):
     return X_2d, explained, scaler, pca
 
 if __name__ == "__main__":
-    X, y, ids, y_str = load_wdbc(path="dataset/wdbc.data")
+    X, y, ids, y_str = load_wdbc(path="../dataset/wdbc.data")
     print("X shape:", X.shape)      # Expect (569, 30) 
     print("y classes:", np.unique(y))
 
