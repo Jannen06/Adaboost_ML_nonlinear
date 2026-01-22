@@ -26,7 +26,10 @@
 \titlepage
 \end{frame}
 \note{
-Hello everyone. Today we want to talk about AdaBoost. We often try to build one 'genius' model, like a deep neural network, to solve a problem. But AdaBoost takes a different approach: it asks, can a committee of 'weak learners' come together to make a genius decision?
+Hello everyone. Today we want to talk about AdaBoost. 
+We often try to build one 'genius' model, like a deep neural network, to solve a problem. 
+But AdaBoost takes a different approach: 
+it asks, can a committee of 'weak learners' come together to make a genius decision?
 }
 
 % Introduction
@@ -57,7 +60,9 @@ H(x) = \text{sign}\left(\sum \alpha_k h_k(x)\right)
 
 \note{
 Look at this dataset. A single line—a decision stump—fails miserably. It gets 50\% wrong.
-AdaBoost says: don't make the line more complex. Instead, let's keep adding simple lines, but make each new line focus on the mistakes of the previous one. The final strong classifier $H(x)$ is just a weighted sum of these simple lines.
+AdaBoost says: don't make the line more complex. Instead, let's keep adding simple lines, 
+but make each new line focus on the mistakes of the previous one. 
+The final strong classifier $H(x)$ is just a weighted sum of these simple lines.
 }
 
 % Theoretical Foundations
@@ -79,8 +84,11 @@ Focuses heavily on misclassified points ($t \neq f(x)$).
 \end{frame}
 
 \note{
-So how do we train this? Your instinct might be to use Squared Error, like in regression. But for classification, that's dangerous. If the class is +1 and we predict +10, Squared Error penalizes us for being 'too correct.'
-AdaBoost uses Exponential Error. It pushes the error to zero if we are right, but explodes exponentially if we are wrong. This 'panic' when wrong is what drives the algorithm.
+So how do we train this? Your instinct might be to use Squared Error, like in regression. But for classification, 
+that's dangerous. If the class is +1 and we predict +10, Squared Error penalizes us for being 'too correct.'
+AdaBoost uses Exponential Error. 
+It pushes the error to zero if we are right, but explodes exponentially if we are wrong. 
+This 'panic' when wrong is what drives the algorithm.
 }
 
 % Slide 4
@@ -104,7 +112,9 @@ w_n^{(k)} = \exp(-t_n H_{k-1}(x_n))
 
 \note{
 This is the core mathematical trick. We don't solve the whole problem at once. We freeze the past.
-If we expand the error equation, the 'past' predictions just become a constant number for each data point. We call this number the weight $w_n$. This proves that AdaBoost isn't just heuristic—it's mathematically updating weights based on previous total error.
+If we expand the error equation, the 'past' predictions just become a constant number for each data point. 
+We call this number the weight $w_n$. 
+This proves that AdaBoost isn't just heuristic—it's mathematically updating weights based on previous total error.
 }
 
 % Slide 5
@@ -285,7 +295,7 @@ Now here's the visualization challenge. We have 30 features. We can't plot 30 di
     \end{enumerate}
 
     \vspace{0.3cm}
-    \small \textit{The algorithm iteratively focuses on hard-to-classify samples}
+    \small \textit{The algorithm iteratively focuses on hard to classify samples}
 \end{columns}
 
 \end{frame}
@@ -296,33 +306,33 @@ Let's see this math in action. I've implemented the algorithm from scratch. I'm 
 
 
 % Slide 11: Why AdaBoost Works
+% Slide 11: Why AdaBoost Works
 \begin{frame}{Why AdaBoost Works: The Exponential Error}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.95\textwidth]{./boundary_progression.png}
-    \caption{\footnotesize Decision boundary evolution: 1, 2, 3, 5 weak learners. 
+    \caption{\footnotesize Decision boundary evolution: 1, 5, 10, 50 weak learners. 
     Blue regions = Benign class, Red regions = Malignant class. Black line = decision boundary.}
 \end{figure}
 
-\vspace{-0.2cm}
-
 \small
 \begin{itemize}
-    \item \textbf{Iteration 1:} Single stump creates \textcolor{red}{vertical line}
-    \begin{itemize}
-        \item Linear boundary = no better than random 
-        \item Cannot capture non-linear class structure
+    \item \textbf{1 Learner:} Single stump creates simple linear split
+    \begin{itemize}\small
+        \item Makes one decision: "if feature $>$ threshold"
+        \item Cannot capture non-linear patterns
+        \item Accuracy: $\sim$92\% | 45 errors
     \end{itemize}
     
-    \item \textbf{Iterations 2-5:} Ensemble focuses on \textbf{misclassified points}
-    \begin{itemize}
-        \item Weights on errors grow exponentially
-        \item Next stump forces hard regions
+    \item \textbf{5-50 Learners:} Ensemble refines boundary iteratively
+    \begin{itemize}\small
+        \item Error weights grow exponentially: $w \leftarrow w \cdot e^{-\alpha y h(x)}$
+        \item Each stump targets previous mistakes
+        \item Non-linear boundary emerges | Accuracy: $\sim$96\% | 23 errors
     \end{itemize}
     
 \end{itemize}
-
 \end{frame}
 
 \note{

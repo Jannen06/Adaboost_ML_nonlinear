@@ -1,7 +1,7 @@
 # Fdb version 3
-["pdflatex"] 1768991852 "/home/jannen/Documents/MAS2025/Sem_2/ML/git/Adaboost_ML_nonlinear/presentation/adaptive_boosting_presentation.tex" "adaptive_boosting_presentation.pdf" "adaptive_boosting_presentation" 1768991852
+["pdflatex"] 1768993165 "/home/jannen/Documents/MAS2025/Sem_2/ML/git/Adaboost_ML_nonlinear/presentation/adaptive_boosting_presentation.tex" "adaptive_boosting_presentation.pdf" "adaptive_boosting_presentation" 1768993165
   "/etc/texmf/web2c/texmf.cnf" 1745067355 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/jannen/Documents/MAS2025/Sem_2/ML/git/Adaboost_ML_nonlinear/presentation/adaptive_boosting_presentation.tex" 1768991850 14535 13ba42402cb6514feee2f33ddb727fe9 ""
+  "/home/jannen/Documents/MAS2025/Sem_2/ML/git/Adaboost_ML_nonlinear/presentation/adaptive_boosting_presentation.tex" 1768993164 14713 c218a3cc4cf2054bf7503c5aea35522b ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1246382020 1004 54797486969f23fa377b128694d548df ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1246382020 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
@@ -216,10 +216,10 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1745945390 2799893 9c5497b27b482029ab950f130a4df539 ""
   "Figure_1.png" 1767958854 78018 d7cfc0ce036c8fc8aa56cc2ebdc594f0 ""
   "Figure_2.png" 1767958854 90051 6fa9ff67ab51e7bf296289eac2b18d18 ""
-  "adaptive_boosting_presentation.aux" 0 -1 0 "pdflatex"
-  "adaptive_boosting_presentation.nav" 1768991852 1388 37fb167c90003b6656a249083ce3750a "pdflatex"
+  "adaptive_boosting_presentation.aux" 1768993165 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "adaptive_boosting_presentation.nav" 0 -1 0 "pdflatex"
   "adaptive_boosting_presentation.out" 0 -1 0 "pdflatex"
-  "adaptive_boosting_presentation.tex" 1768991850 14535 13ba42402cb6514feee2f33ddb727fe9 ""
+  "adaptive_boosting_presentation.tex" 1768993164 14713 c218a3cc4cf2054bf7503c5aea35522b ""
   "boundary_progression.png" 1768862759 618691 0a2530a9dc71fab83e8b28cbe092ae18 ""
   "pca_visualization.png" 1768861794 577946 5ce5e2156a7209a195e91443f97e7858 ""
   (generated)
